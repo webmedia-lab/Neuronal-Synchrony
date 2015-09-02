@@ -6,6 +6,9 @@ $(function() {
     interacting = false, $merchandise = $('#merchandise'),
     merchandising = false;
 
+  // keys pressed
+  var keys_pressed = [];
+
   /**
    * Append Sound Generation to Animations
    */
@@ -138,6 +141,9 @@ $(function() {
         var code = e.which || data;
         var index;
 
+        // keys pressed
+        keys_pressed.push(String.fromCharCode(code));
+
         switch (code) {
 
           // Q - P
@@ -232,6 +238,29 @@ $(function() {
             index = '3,0';
             break;
 
+          // backspace
+          case 8:
+            keys_pressed = []
+            break;
+        }
+
+        if (keys_pressed.join('').toLowerCase() === 'casavolcada') {
+          console.log('vaaamooo');
+
+          var sound = new Sound('/assets/casa_volcada_voces.wav', function() {
+            this.play({
+              loop: false
+            });
+          });
+
+          sound.play();
+
+          keys_pressed = []
+        }
+
+        // limpiamos el array
+        if (keys_pressed.length > 15) {
+          keys_pressed = []
         }
 
         trigger(index);
@@ -243,8 +272,9 @@ $(function() {
       $hint.find('.message').html('Press anywhere on the screen and turn up speakers');
       createMobileUI();
     } else {
-      $credits.css('display', 'block');
-      $hint.find('.message').html('Press any key, A to Z or spacebar, and turn up speakers');
+      // disable footer 
+      // $credits.css('display', 'block');
+      $hint.find('.message').html('Apreta cualquier letra..');
     }
 
     two
