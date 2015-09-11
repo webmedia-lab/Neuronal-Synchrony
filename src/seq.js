@@ -1,58 +1,43 @@
 'use strict'
 
 var  EvilExtensions = (function () {
-    (1) .__proto__.times = function (block) { for (var i = 0; i < this; i++) { block.call(this, i) } };
+    (1).__proto__.times = function (block) { for (var i = 0; i < this; i++) { block.call(this, i) } };
     ([]).__proto__.each  = ([]).__proto__.forEach;
 })()
 
 
-function Seq (beats, bpm) {
-    var self = {},
-        beats = beats || 15,
+function Seq (steps, bpm) {
+    var steps = steps || 8,
         bpm = bpm || 400,  
+        beat = 60 / bpm, // duracion del 1 slot
         slots = [],
         current = 0,
-        beatDuration = 60/bpm,               // duracion del 1 slot
-        barDuration = beatDuration * beats,  // duración de una vuelta
-        
-        context = new AudioContext(),
-        clock = new WAAClock(context, {toleranceEarly: 0.1})
-    ;
+        context = new AudioContext() ;
 
-    function heartBeat(i) {
-        var beat = function  () {
-            current = i;
-            slots[i].each( function (key) {
-                dispatchEvent( new KeyboardEvent('keydown', { code: key }) );
-            });
-        };
-        
-        var event = clock.callbackAtTime( beat, nextBeatTime(i) );
-        event.repeat(barDuration);
-        event.tolerance({ late: 0.01 });
+    steps.times( function(i) { slots[i] = [] });
+    
+    
+    function play() {
+        var now = context.currentTime// (Date.now() * 1000 + new Date().getMilliseconds()) / 1000; 
+        current = Math.floor((now / beat) % steps)
+        slots[current].forEach( function (key) {
+            triggerSound(key);
+        });
     }
     
-    
-    function nextBeatTime(i) {
-        var currentTime = context.currentTime,
-            currentBar = Math.floor(currentTime / barDuration),
-            currentBeat = Math.round(currentTime % barDuration)
-        ;
-        
-        if (currentBeat < i) {
-            return currentBar * barDuration + i * beatDuration;
-        } else {
-            return (currentBar + 1) * barDuration + i * beatDuration;
-        }
-    }
 
-    // init()
-    beats.times( function(i) { slots[i] = [] });
-    
-    window.addEventListener('keydown', function (event) {
+    window.addEventListener('keyup', function (event) {
+        console.log(event);
         slots[current].push( event.keyCode || event.which );
     });
-    //arrancar el reloj y el callback que dispara las letras de cada slot
-    heartBeat(0);
-    clock.start();
+
+    setInterval(play, beat)
+    
+    return {
+        steps: steps,
+        bmp: bpm,
+        slots: slots,
+        beat: beat,
+        current: current,
+    };
 }

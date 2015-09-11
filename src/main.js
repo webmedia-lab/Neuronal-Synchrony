@@ -58,6 +58,135 @@ $(function() {
         });
     });
 
+
+    window.triggerSound = function (code){
+        var index;
+        
+        // keys pressed
+        keys_pressed.push(String.fromCharCode(code));
+
+        switch (code) {
+            // Q - P
+        case 81:
+            index = '0,0';
+            break;
+        case 87:
+            index = '0,1';
+            break;
+        case 69:
+            index = '0,2';
+            break;
+        case 82:
+            index = '0,3';
+            break;
+        case 84:
+            index = '0,4';
+            break;
+        case 89:
+            index = '0,5';
+            break;
+        case 85:
+            index = '0,6';
+            break;
+        case 73:
+            index = '0,7';
+            break;
+        case 79:
+            index = '0,8';
+            break;
+        case 80:
+            index = '0,9';
+            break;
+
+            // A - L
+        case 65:
+            index = '1,0';
+            break;
+        case 83:
+            index = '1,1';
+            break;
+        case 68:
+            index = '1,2';
+            break;
+        case 70:
+            index = '1,3';
+            break;
+        case 71:
+            index = '1,4';
+            break;
+        case 72:
+            index = '1,5';
+            break;
+        case 74:
+            index = '1,6';
+            break;
+        case 75:
+            index = '1,7';
+            break;
+        case 76:
+            index = '1,8';
+            break;
+
+            // Z - M
+        case 90:
+            index = '2,0';
+            break;
+        case 88:
+            index = '2,1';
+            break;
+        case 67:
+            index = '2,2';
+            break;
+        case 86:
+            index = '2,3';
+            break;
+        case 66:
+            index = '2,4';
+            break;
+        case 78:
+            index = '2,5';
+            break;
+        case 77:
+            index = '2,6';
+            break;
+            // case 188:
+            //   index = '2,7';
+            //   break;
+
+            // SPACE
+        case 32:
+            index = '3,0';
+            break;
+
+            // backspace
+        case 8:
+            keys_pressed = []
+            break;
+        }
+
+        if (keys_pressed.join('').toLowerCase() === 'casavolcada') {
+            console.log('vaaamooo');
+
+            var sound = new Sound('/assets/casa_volcada_voces.wav', function() {
+                this.play({
+                    loop: false
+                });
+            });
+
+            sound.play();
+
+            keys_pressed = []
+        }
+
+        // limpiamos el array
+        if (keys_pressed.length > 15) {
+            keys_pressed = []
+        }
+
+        trigger(index);
+        triggered();
+    }
+
     function initialize() {
 
         animations.initializeSound();
@@ -127,138 +256,15 @@ $(function() {
                 }
             })
             .bind('keydown', function(e, data) {
+                
                 if (e.metaKey || e.ctrlKey) {
                     return;
                 }
 
                 e.preventDefault();
                 var code = e.which || data;
-                var index;
-                
-                // keys pressed
-                keys_pressed.push(String.fromCharCode(code));
 
-                switch (code) {
-                    // Q - P
-                case 81:
-                    index = '0,0';
-                    break;
-                case 87:
-                    index = '0,1';
-                    break;
-                case 69:
-                    index = '0,2';
-                    break;
-                case 82:
-                    index = '0,3';
-                    break;
-                case 84:
-                    index = '0,4';
-                    break;
-                case 89:
-                    index = '0,5';
-                    break;
-                case 85:
-                    index = '0,6';
-                    break;
-                case 73:
-                    index = '0,7';
-                    break;
-                case 79:
-                    index = '0,8';
-                    break;
-                case 80:
-                    index = '0,9';
-                    break;
-
-                    // A - L
-                case 65:
-                    index = '1,0';
-                    break;
-                case 83:
-                    index = '1,1';
-                    break;
-                case 68:
-                    index = '1,2';
-                    break;
-                case 70:
-                    index = '1,3';
-                    break;
-                case 71:
-                    index = '1,4';
-                    break;
-                case 72:
-                    index = '1,5';
-                    break;
-                case 74:
-                    index = '1,6';
-                    break;
-                case 75:
-                    index = '1,7';
-                    break;
-                case 76:
-                    index = '1,8';
-                    break;
-
-                    // Z - M
-                case 90:
-                    index = '2,0';
-                    break;
-                case 88:
-                    index = '2,1';
-                    break;
-                case 67:
-                    index = '2,2';
-                    break;
-                case 86:
-                    index = '2,3';
-                    break;
-                case 66:
-                    index = '2,4';
-                    break;
-                case 78:
-                    index = '2,5';
-                    break;
-                case 77:
-                    index = '2,6';
-                    break;
-                    // case 188:
-                    //   index = '2,7';
-                    //   break;
-
-                    // SPACE
-                case 32:
-                    index = '3,0';
-                    break;
-
-                    // backspace
-                case 8:
-                    keys_pressed = []
-                    break;
-                }
-
-                if (keys_pressed.join('').toLowerCase() === 'casavolcada') {
-                    console.log('vaaamooo');
-
-                    var sound = new Sound('/assets/casa_volcada_voces.wav', function() {
-                        this.play({
-                            loop: false
-                        });
-                    });
-
-                    sound.play();
-
-                    keys_pressed = []
-                }
-
-                // limpiamos el array
-                if (keys_pressed.length > 15) {
-                    keys_pressed = []
-                }
-
-                trigger(index);
-                triggered();
-
+                triggerSound(code);
             });
 
         if (has.mobile) {

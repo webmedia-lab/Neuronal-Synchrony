@@ -54,7 +54,8 @@
     },
 
     get: function(url, callback) {
-      var request = new XMLHttpRequest();
+        var request = new XMLHttpRequest();
+        url = '.' + url
       request.open('GET', url, true);
       request.responseType = 'arraybuffer';
       request.onload = function() {
