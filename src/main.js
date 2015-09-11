@@ -12,11 +12,8 @@ $(function() {
         mouse = new Two.Vector(),
         $embed = $('#embed'),
         embedding = false,
-        interacting = false,
-        $merchandise = $('#merchandise'),
-        merchandising = false,
-        seq = Sequencer();
-
+        interacting = false;
+        
     // keys pressed
     var keys_pressed = [];
 
@@ -137,8 +134,6 @@ $(function() {
                 e.preventDefault();
                 var code = e.which || data;
                 var index;
-                
-                seq.keyPressed(code);
                 
                 // keys pressed
                 keys_pressed.push(String.fromCharCode(code));
@@ -576,8 +571,6 @@ $(function() {
             interacting = true;
             return;
         }
-        $hint.fadeOut();
-        showHint();
     }
 
 
