@@ -164,7 +164,7 @@ $(function() {
             break;
         }
 
-        if (keys_pressed.join('').toLowerCase() === 'casavolcada') {
+        if (keys_pressed.join('').toLowerCase() === 'casa' || keys_pressed.join('').toLowerCase() === 'volcada') {
             console.log('vaaamooo');
 
             var sound = new Sound('/assets/casa_volcada_voces.wav', function() {
