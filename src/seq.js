@@ -80,15 +80,19 @@ function Seq (steps, bpm) {
         playSlot( slotAtTime(context.currentTime) );
     }
 
+    function evict() {       
+        var ev = queue.splice(Math.floor(Math.random() * queue.length), 1)[0];
+        console.log('evicted sound ' + ev);
+        if ( ev !== undefined ) {
+            slots[ev.slot].remove(ev.key);
+        }
+    }
+    
     function garbageCollector(){
         console.log('garbage collection! queue size ' + queue.length);
-        if (queue.length > 16) {
-            var ev = queue.splice(Math.floor(Math.random() * queue.length), 1)[0];
-            console.log('evicted sound ' + ev);
-            if ( ev !== undefined ) {
-                slots[ev.slot].remove(ev.key);
-            }
-        }
+        if (queue.length > 32) { (3).times(evict) }
+        else if (queue.length > 16) { (2).times(evict) }
+        else if (queue.length > 2) { evict() }
     };
 
     
@@ -113,7 +117,7 @@ function Seq (steps, bpm) {
         .repeat(beat)
         .tolerance({late: 100});
 
-    setInterval(garbageCollector, round * 4);
+    setInterval(garbageCollector, 2 * round);
     
     return {
         steps: steps,
