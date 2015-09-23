@@ -49,8 +49,7 @@ function Seq (steps, bpm) {
         context = new AudioContext(),
         clock = new WAAClock(context, {toleranceEarly: 0.1}),
         soundingKeys = [81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 65, 83, 68, 70, 71, 72, 74, 75, 76, 90, 88, 67, 86, 66, 78, 77],
-        queue = [],
-        timerId = null
+        queue = []
     ;
     
     
@@ -76,7 +75,7 @@ function Seq (steps, bpm) {
     }
 
     function cleanSlots(){
-        timerId = setInterval(garbageCollector, 1000);
+        setInterval(evict(), 500);
     }
 
     function tick() {
@@ -104,7 +103,6 @@ function Seq (steps, bpm) {
             setInterval(garbageCollector, 4 * round);
         }
     };
-
     
     // init
     steps.times( function(i) { slots[i] = [] });
