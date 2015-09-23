@@ -93,6 +93,12 @@ function Seq (steps, bpm) {
         if (queue.length > 32) { (3).times(evict) }
         else if (queue.length > 16) { (2).times(evict) }
         else if (queue.length > 2) { evict() }
+    }
+
+    function launchGarbageCollector(){
+        if (queue.length > 16) {
+            setInterval(garbageCollector, 4 * round);
+        }
     };
 
     
@@ -117,7 +123,7 @@ function Seq (steps, bpm) {
         .repeat(beat)
         .tolerance({late: 100});
 
-    setInterval(garbageCollector, 2 * round);
+    setInterval(launchGarbageCollector, 2000);
     
     return {
         steps: steps,
