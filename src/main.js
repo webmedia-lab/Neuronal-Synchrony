@@ -161,7 +161,6 @@ $(function() {
             // backspace
         case 8:
             keys_pressed = [];
-            seq.cleanSlots();
             break;
         }
 

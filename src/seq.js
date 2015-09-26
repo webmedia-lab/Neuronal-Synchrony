@@ -11,6 +11,10 @@ var  EvilExtensions = (function () {
 
         return this;
     }
+    
+    Array.prototype.sample = function () {
+        return this[ Math.floor(Math.random() * this.length) ];
+    }
     // MDN polyfill
     Array.prototype.includes = function(searchElement /*, fromIndex */) {
         var O = Object(this);
@@ -41,7 +45,7 @@ var  EvilExtensions = (function () {
 })();
 
 function Seq (steps, bpm) {
-    var steps = steps || 8,
+    var steps = steps || 16,
         bpm = bpm || 300,  
         beat = 60.0 / bpm, // duración del 1 slot en segundos
         round = beat * steps * 1000, // duración de una vuelta en millisegundos
@@ -49,7 +53,8 @@ function Seq (steps, bpm) {
         context = new AudioContext(),
         clock = new WAAClock(context, {toleranceEarly: 0.1}),
         soundingKeys = [81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 65, 83, 68, 70, 71, 72, 74, 75, 76, 90, 88, 67, 86, 66, 78, 77],
-        queue = []
+        queue = [],
+        idleTime = 0
     ;
     
     
@@ -69,13 +74,19 @@ function Seq (steps, bpm) {
 
     function playSlot(slot) {
         slots[slot].each( function (key) {
-            console.log('triggering ' + key);
+            //console.log('triggering ' + key);
             triggerSound(key);
         });
     }
 
-    function cleanSlots(){
-        setInterval(evict(), 500);
+    function clean(){
+        console.log('cleaning...')
+        if (queue.length > 1) {
+            kill();
+            setTimeout(clean, round);
+        } else {
+            console.log('cleaning off')
+        }
     }
 
     function tick() {
@@ -83,49 +94,78 @@ function Seq (steps, bpm) {
         playSlot( slotAtTime(context.currentTime) );
     }
 
-    function evict() {       
+    
+    function kill() {       
         var ev = queue.splice(Math.floor(Math.random() * queue.length), 1)[0];
-        console.log('evicted sound ' + ev);
         if ( ev !== undefined ) {
             slots[ev.slot].remove(ev.key);
+            console.log('sound ' + ev.key + ' in slot ' +  ev.slot + ' died...');
         }
     }
     
-    function garbageCollector(){
-        console.log('garbage collection! queue size ' + queue.length);
-        if (queue.length > 32) { (3).times(evict) }
-        else if (queue.length > 16) { (2).times(evict) }
-        else if (queue.length > 2) { evict() }
+    function death(){
+        // fibonacci ?
+        if (queue.length > 21) { (3).times(kill) }
+        else if (queue.length > 13) { (2).times(kill) }
+        else if (queue.length > 8) { kill() }
+        else if (queue.length > 5) { kill() }
     }
 
-    function launchGarbageCollector(){
-        if (queue.length > 16) {
-            setInterval(garbageCollector, 4 * round);
-        }
-    };
+    function life() {
+        var key = soundingKeys.sample();
+        console.log('bringing sound alive ' + key);
+        schedule(key, context.currentTime);
+        setTimeout(life, Math.random() * 16 * round);
+    }
+
+    // Initialization
     
-    // init
+    // initialize sequencer steps
     steps.times( function(i) { slots[i] = [] });
     
     window.addEventListener('keydown', function (event) {
+        idleTime = 0;
         var key = event.keyCode || event.which;
         event.preventDefault();
         if (event.ctrlKey || event.altKey) {
             return false; 
         }
-            
-        if(soundingKeys.includes(key)) {
+
+        else if (key == 8) {
+            console.log('cleaning on!')
+            clean();
+        }
+        
+        else if (soundingKeys.includes(key)) {
             schedule(key, context.currentTime);
         }
     });
 
+    // create the tick for the sequencer
     //setInterval(tick, beat * 1000)
     clock.start();
     clock.callbackAtTime(tick, 0)
         .repeat(beat)
         .tolerance({late: 100});
 
-    setInterval(launchGarbageCollector, 2000);
+    // Garbage collector
+    // var GCTimeout = null;
+    // GCTimeout = setInterval( function () {
+    //     if (queue.length > 16) { launchGarbageCollector() };
+    //     clearInterval(GCGCTimeout)
+    // }, 2000);
+    setInterval(death, 4 * round);
+
+    // Set the ecosystem alive
+    setTimeout(life, Math.random() * 16 * round);
+
+    //idle time management
+
+    // idleInterval = setInterval(function(){
+    //     idleTime++;
+    //     //if (idleTime > algo) { hacer algo }
+    // }, 1000);
+    
     
     return {
         steps: steps,
@@ -135,6 +175,5 @@ function Seq (steps, bpm) {
         context: context,
         clock: clock,
         queue: queue,
-        cleanSlots: cleanSlots,
     };
 }
