@@ -45,8 +45,8 @@ var  EvilExtensions = (function () {
 })();
 
 function Seq (steps, bpm) {
-    var steps = steps || 16,
-        bpm = bpm || 300,  
+    var steps = steps || 9,
+        bpm = bpm || 400,  
         beat = 60.0 / bpm, // duración del 1 slot en segundos
         round = beat * steps * 1000, // duración de una vuelta en millisegundos
         slots = [],
@@ -83,7 +83,7 @@ function Seq (steps, bpm) {
         console.log('cleaning...')
         if (queue.length > 1) {
             kill();
-            setTimeout(clean, round);
+            setTimeout(clean, 300);
         } else {
             console.log('cleaning off')
         }
@@ -108,14 +108,18 @@ function Seq (steps, bpm) {
         if (queue.length > 21) { (3).times(kill) }
         else if (queue.length > 13) { (2).times(kill) }
         else if (queue.length > 8) { kill() }
-        else if (queue.length > 5) { kill() }
+        else if (queue.length > 3) { kill() }
+        console.log('death called');
+        setTimeout(death, Math.random() * 2 * round);
     }
 
     function life() {
         var key = soundingKeys.sample();
         console.log('bringing sound alive ' + key);
         schedule(key, context.currentTime);
-        setTimeout(life, Math.random() * 16 * round);
+        var next = 8 * round + Math.random() * 4 * round;
+        console.log('next life ' + next);
+        setTimeout(life, next);
     }
 
     // Initialization
@@ -154,10 +158,10 @@ function Seq (steps, bpm) {
     //     if (queue.length > 16) { launchGarbageCollector() };
     //     clearInterval(GCGCTimeout)
     // }, 2000);
-    setInterval(death, 4 * round);
 
     // Set the ecosystem alive
-    setTimeout(life, Math.random() * 16 * round);
+    death();
+    life();
 
     //idle time management
 
@@ -170,6 +174,7 @@ function Seq (steps, bpm) {
     return {
         steps: steps,
         bmp: bpm,
+        round: round,
         slots: slots,
         beat: beat,
         context: context,

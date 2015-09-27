@@ -4,7 +4,7 @@ Son las le dan origen, sentido
 
 las que le dan ser
 
-La interacción humana tiene un potencial creador enorme,
+La interacción humana tiene un potencial creador ,
 tiene la capacidad de gestar cosas nuevas,
 incluso, de mejorarlo
 
@@ -27,5 +27,16 @@ Disfrute
 
 
 
+EcoSistema 
+
+Interacción Audio Visual basada en Patatap (http://www.patatap.com)
+Y componentes de programación propios
+
+
+
+
+Un ecosistema se mantiene en un delicado equilibrio omeostático.
+Fuerzas entrópicas, creativas, de cambio se balacean con
+aquellas que tienden a la estabilidad, a la preservación.
 
 
